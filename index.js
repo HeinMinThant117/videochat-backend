@@ -2,6 +2,7 @@ import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 
 import "dotenv/config";
+const host = "RENDER" in process.env ? `0.0.0.0` : `localhost`;
 
 const port = process.env.PORT || 3000;
 
@@ -37,4 +38,4 @@ server.ready().then(() => {
   });
 });
 
-server.listen({ port });
+server.listen({ host, port });
