@@ -1,6 +1,10 @@
 import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 
+import "dotenv/config";
+
+const port = process.env.PORT || 3000;
+
 const server = fastify();
 server.register(fastifyIO, {
   cors: {
@@ -33,4 +37,4 @@ server.ready().then(() => {
   });
 });
 
-server.listen({ port: 3000 });
+server.listen({ port });
