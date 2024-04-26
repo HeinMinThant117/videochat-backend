@@ -5,14 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
     "dev": "ts-node-dev index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "^4.26.2"
+    "fastify": "^4.26.2",
+    "fastify-socket.io": "^5.0.0",
+    "socket.io": "^4.7.5"
   },
+  "type": "module",
   "devDependencies": {
     "@types/node": "^20.12.7",
     "ts-node-dev": "^2.0.0",
