@@ -9,12 +9,27 @@ server.register(fastifyIO, {
 });
 
 server.get("/", (req, res) => {
-  server.io.emit("hello");
+  res.send({ hello: "world" });
 });
 
 server.ready().then(() => {
   server.io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log("A user connected.");
+    socket.on("offer", (msg) => {
+      socket.broadcast.emit("offer", msg);
+    });
+    socket.on("answer", (msg) => {
+      socket.broadcast.emit("answer", msg);
+    });
+    socket.on("candidate", (msg) => {
+      socket.broadcast.emit("candidate", msg);
+    });
+    socket.on("ready", (msg) => {
+      socket.broadcast.emit("ready", msg);
+    });
+    socket.on("bye", (msg) => {
+      socket.broadcast.emit("bye", msg);
+    });
   });
 });
 
