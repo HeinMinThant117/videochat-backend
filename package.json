@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "ts-node-dev index.ts"
+    "dev": "npx nodemon"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +17,10 @@
     "fastify-socket.io": "^5.0.0",
     "socket.io": "^4.7.5"
   },
-  "type": "module",
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "ts-node-dev": "^2.0.0",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }
 }
