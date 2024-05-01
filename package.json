@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build && node build/index.js",
     "dev": "npx nodemon",
-    "build": "rimraf ./build && tsc"
+    "build": "rimraf ./build && tsc",
+    "prepare": "husky && husky install"
   },
   "keywords": [],
   "author": "",
@@ -34,16 +35,16 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.js": [
+    "*.ts": [
       "eslint --fix",
-      "prettier --write",
-      "git add"
-    ]
+      "prettier --write"
+    ],
+    "*.tsx": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }
