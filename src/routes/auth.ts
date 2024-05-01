@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { ObjectId } from "@fastify/mongodb";
 
 interface LoginUser {
   email: string;
@@ -13,8 +14,32 @@ interface RegisterUser {
   password: string;
 }
 
+interface JWTUser {
+  id: string;
+  iat: number;
+}
+
 async function routes(fastify: FastifyInstance) {
   const userCollection = fastify.mongo.db?.collection("users");
+
+  fastify.get("/user", async (request, reply) => {
+    const token = request.headers.authorization?.split("Bearer ")[1];
+    if (!token) {
+      return reply.code(401).send({ error: "Unauthorized" });
+    }
+    const verifyResult = jwt.verify(
+      token,
+      "8gGDNV6fKU7N6DY%"
+    ) as JWTUser as any;
+
+    const user: any = await userCollection?.findOne({
+      _id: ObjectId.createFromHexString(verifyResult.id),
+    });
+    
+    return {
+      user: { id: user._id, email: user.email, username: user.username },
+    };
+  });
 
   fastify.post<{ Body: LoginUser }>("/login", async (request, reply) => {
     const { email, password } = request.body;
