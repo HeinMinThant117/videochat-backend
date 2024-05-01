@@ -13,8 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/mongodb": "^8.0.0",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
+    "fastify-plugin": "^4.5.1",
     "fastify-socket.io": "^5.0.0",
     "socket.io": "^4.7.5"
   },
