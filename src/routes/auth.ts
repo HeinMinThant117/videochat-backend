@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 interface LoginUser {
   email: string;
@@ -19,11 +20,30 @@ async function routes(fastify: FastifyInstance) {
     const { email, password } = request.body;
     const findUser = await userCollection?.findOne({ email });
     if (!findUser) {
-      return reply.code(404).send({ error: "User not found." });
+      return reply.code(404).send({ error: "User not found" });
     }
 
-    return { message: "Success" };
-    // return { user: findUser };
+    const result = await bcrypt.compare(password, findUser.password);
+    if (!result) {
+      return reply.code(401).send({ error: "Invalid email or password" });
+    }
+
+    const jwtToken = jwt.sign(
+      {
+        id: findUser._id,
+      },
+      "8gGDNV6fKU7N6DY%"
+    );
+
+    return {
+      message: "Success",
+      user: {
+        token: jwtToken,
+        id: findUser._id,
+        username: findUser.username,
+        emal: findUser.email,
+      },
+    };
   });
 
   fastify.post<{ Body: RegisterUser }>("/register", async (request, reply) => {
