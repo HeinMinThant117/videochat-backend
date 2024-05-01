@@ -21,21 +21,20 @@ interface JWTUser {
 
 async function routes(fastify: FastifyInstance) {
   const userCollection = fastify.mongo.db?.collection("users");
+  const jwtSecret = process.env.JWT_SECRET as jwt.Secret;
 
   fastify.get("/user", async (request, reply) => {
     const token = request.headers.authorization?.split("Bearer ")[1];
     if (!token) {
       return reply.code(401).send({ error: "Unauthorized" });
     }
-    const verifyResult = jwt.verify(
-      token,
-      "8gGDNV6fKU7N6DY%"
-    ) as JWTUser as any;
+
+    const verifyResult = jwt.verify(token, jwtSecret) as JWTUser as any;
 
     const user: any = await userCollection?.findOne({
       _id: ObjectId.createFromHexString(verifyResult.id),
     });
-    
+
     return {
       user: { id: user._id, email: user.email, username: user.username },
     };
@@ -57,7 +56,7 @@ async function routes(fastify: FastifyInstance) {
       {
         id: findUser._id,
       },
-      "8gGDNV6fKU7N6DY%"
+      jwtSecret
     );
 
     return {

@@ -12,6 +12,7 @@ fastify.register(ourDbConnector);
 fastify.register(authRoutes);
 
 fastify.get("/", () => {
+  console.log("ENV : ", process.env.JWT_SECRET);
   return { hello: "world" };
 });
 
