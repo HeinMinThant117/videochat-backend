@@ -11,6 +11,10 @@ const fastify = Fastify({
 fastify.register(ourDbConnector);
 fastify.register(authRoutes);
 
+fastify.get("/", () => {
+  return { hello: "world" };
+});
+
 async function start() {
   try {
     await fastify.listen({ port: 3000 });
