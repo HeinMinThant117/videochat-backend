@@ -1,35 +1,22 @@
-import Fasitfy, { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { Server, IncomingMessage, ServerResponse } from "http";
+import Fastify from "fastify";
+import firstRoute from "./our-first-route";
+import ourDbConnector from "./our-db-connector";
+import authRoutes from "./routes/auth";
 
-const server: FastifyInstance = Fasitfy({});
-
-const opts: RouteShorthandOptions = {
-  schema: {
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          pong: {
-            type: "string",
-          },
-        },
-      },
-    },
-  },
-};
-
-server.get("/ping", opts, async (request, reply) => {
-  return { pong: "pong" };
+const fastify = Fastify({
+  logger: true,
 });
 
-const start = async () => {
+fastify.register(ourDbConnector);
+fastify.register(authRoutes);
+
+async function start() {
   try {
-    await server.listen({ port: 3000 });
-    console.log(`Server is listening on PORT 3000`);
+    await fastify.listen({ port: 3000 });
   } catch (err) {
-    server.log.error(err);
+    fastify.log.error(err);
     process.exit(1);
   }
-};
+}
 
 start();
