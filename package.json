@@ -14,13 +14,17 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/mongodb": "^8.0.0",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
     "fastify-plugin": "^4.5.1",
     "fastify-socket.io": "^5.0.0",
+    "jsonwebtoken": "^9.0.2",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.7",
     "nodemon": "^3.1.0",
     "rimraf": "^5.0.5",
