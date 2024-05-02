@@ -7,11 +7,11 @@ interface AnimalParams {
 async function routes(fastify: FastifyInstance) {
   const collection = fastify.mongo.db?.collection("test_collection");
 
-  fastify.get("/", async (request, reply) => {
+  fastify.get("/", async () => {
     return { hello: "world" };
   });
 
-  fastify.get("/animals", async (request, reply) => {
+  fastify.get("/animals", async () => {
     const result = await collection?.find().toArray();
     if (result?.length === 0) {
       throw new Error("No documents found");
@@ -19,20 +19,16 @@ async function routes(fastify: FastifyInstance) {
     return result;
   });
 
-  fastify.get<{ Params: AnimalParams }>(
-    "/animals/:animal",
-    async (request, reply) => {
-      const animal = request.params;
-      const result = await collection?.findOne({
-        animal: request.params.animal,
-      });
-      if (!result) {
-        throw new Error("Invalid value");
-      }
-
-      return result;
+  fastify.get<{ Params: AnimalParams }>("/animals/:animal", async (request) => {
+    const result = await collection?.findOne({
+      animal: request.params.animal,
+    });
+    if (!result) {
+      throw new Error("Invalid value");
     }
-  );
+
+    return result;
+  });
 
   const animalBodyJsonSchema = {
     type: "object",
@@ -49,7 +45,7 @@ async function routes(fastify: FastifyInstance) {
   fastify.post<{ Body: AnimalParams }>(
     "/animals",
     { schema },
-    async (request, reply) => {
+    async (request) => {
       const result = await collection?.insertOne({
         animal: request.body.animal,
       });

@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build && node build/index.js",
     "dev": "npx nodemon",
-    "build": "rimraf ./build && tsc"
+    "build": "tsc",
+    "prepare": "husky && husky install",
+    "lint": "eslint src/",
+    "format": "eslint src/ --fix"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +29,12 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.7",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
     "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"

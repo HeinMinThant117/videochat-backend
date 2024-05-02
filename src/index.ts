@@ -1,5 +1,4 @@
 import Fastify from "fastify";
-import firstRoute from "./our-first-route";
 import ourDbConnector from "./our-db-connector";
 import authRoutes from "./routes/auth";
 import "dotenv/config";
