@@ -1,18 +1,24 @@
 import Fastify from "fastify";
 import ourDbConnector from "./our-db-connector";
 import authRoutes from "./routes/auth";
+import fastifyStatic from "@fastify/static";
 import "dotenv/config";
+import path = require("path");
 
 const fastify = Fastify({
   logger: true,
 });
 
+fastify.register(fastifyStatic, {
+  root: path.join(__dirname, "public"),
+  prefix: "/public/",
+});
+
 fastify.register(ourDbConnector);
 fastify.register(authRoutes);
 
-fastify.get("/", () => {
-  console.log("ENV : ", process.env.JWT_SECRET);
-  return { hello: "world" };
+fastify.get("/", (_request, reply) => {
+  return reply.sendFile("index.html");
 });
 
 async function start() {
