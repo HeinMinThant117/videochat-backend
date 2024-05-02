@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 import { ObjectId } from "@fastify/mongodb";
 
 interface LoginUser {
@@ -29,9 +29,9 @@ async function routes(fastify: FastifyInstance) {
       return reply.code(401).send({ error: "Unauthorized" });
     }
 
-    const verifyResult = jwt.verify(token, jwtSecret) as JWTUser as any;
+    const verifyResult = jwt.verify(token, jwtSecret) as JWTUser;
 
-    const user: any = await userCollection?.findOne({
+    const user = await userCollection?.findOne({
       _id: ObjectId.createFromHexString(verifyResult.id),
     });
 
