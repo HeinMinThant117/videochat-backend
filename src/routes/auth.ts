@@ -85,10 +85,21 @@ async function routes(fastify: FastifyInstance) {
       password: passwordHash,
     });
 
+    const jwtToken = jwt.sign(
+      {
+        id: result.insertedId.toString(),
+      },
+      jwtSecret
+    );
+
     return {
-      id: result?.insertedId,
-      email,
-      username,
+      message: "Success",
+      user: {
+        token: jwtToken,
+        id: result.insertedId.toString(),
+        username,
+        email,
+      },
     };
   });
 }
