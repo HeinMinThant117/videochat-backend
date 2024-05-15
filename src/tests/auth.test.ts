@@ -2,21 +2,14 @@ import { Collection, MongoClient } from "mongodb";
 import app from "../app";
 import "dotenv/config";
 import bcrypt from "bcrypt";
+import { closeConnection, getCollection, initDB } from "../utils/db-helpers";
 
 let client: MongoClient;
-
 let collection: Collection;
 
 beforeAll(async () => {
-  client = new MongoClient(process.env.MONGODB_TEST_URI, {
-    auth: {
-      username: process.env.MONGODB_TEST_USERNAME,
-      password: process.env.MONGODB_TEST_PASSWORD,
-    },
-  });
-  await client.connect();
-  const db = client.db("vidchatDBTest");
-  collection = db.collection("users");
+  client = await initDB();
+  collection = await getCollection("users", client);
 });
 
 beforeEach(async () => {
@@ -81,7 +74,5 @@ describe("Logging In", () => {
 });
 
 afterAll(async () => {
-  if (client instanceof MongoClient) {
-    await client.close();
-  }
+  closeConnection(client);
 });
