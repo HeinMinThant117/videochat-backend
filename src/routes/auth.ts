@@ -40,35 +40,51 @@ async function routes(fastify: FastifyInstance) {
     };
   });
 
-  fastify.post<{ Body: LoginUser }>("/login", async (request, reply) => {
-    const { email, password } = request.body;
-    const findUser = await userCollection?.findOne({ email });
-    if (!findUser) {
-      return reply.code(404).send({ error: "User not found" });
-    }
-
-    const result = await bcrypt.compare(password, findUser.password);
-    if (!result) {
-      return reply.code(401).send({ error: "Invalid email or password" });
-    }
-
-    const jwtToken = jwt.sign(
-      {
-        id: findUser._id,
+  fastify.post<{ Body: LoginUser }>(
+    "/login",
+    {
+      schema: {
+        body: {
+          type: "object",
+          properties: {
+            email: { type: "string" },
+            password: { type: "string" },
+          },
+          required: ["email", "password"],
+        },
       },
-      jwtSecret
-    );
+    },
+    async (request, reply) => {
+      const { email, password } = request.body;
 
-    return {
-      message: "Success",
-      user: {
-        token: jwtToken,
-        id: findUser._id,
-        username: findUser.username,
-        emal: findUser.email,
-      },
-    };
-  });
+      const findUser = await userCollection?.findOne({ email });
+      if (!findUser) {
+        return reply.code(404).send({ error: "User not found" });
+      }
+
+      const result = await bcrypt.compare(password, findUser.password);
+      if (!result) {
+        return reply.code(401).send({ error: "Invalid email or password" });
+      }
+
+      const jwtToken = jwt.sign(
+        {
+          id: findUser._id,
+        },
+        jwtSecret
+      );
+
+      return {
+        message: "Success",
+        user: {
+          token: jwtToken,
+          id: findUser._id,
+          username: findUser.username,
+          emal: findUser.email,
+        },
+      };
+    }
+  );
 
   fastify.post<{ Body: RegisterUser }>("/register", async (request, reply) => {
     const { username, email, password } = request.body;
