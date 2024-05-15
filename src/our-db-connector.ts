@@ -4,15 +4,10 @@ import { FastifyInstance } from "fastify";
 
 async function dbConnector(fastify: FastifyInstance) {
   fastify.register(fastifyMongodb, {
-    // url: process.env.MONGODB_URI,
-    // auth: {
-    // username: process.env.MONGODB_USERNAME,
-    // password: process.env.MONGODB_PASSWORD,
-    // },
-    url: "mongodb://localhost:27017/vidchatDB?authSource=admin",
+    url: process.env.MONGODB_URI,
     auth: {
-      username: "root",
-      password: "example",
+      username: process.env.MONGODB_USERNAME,
+      password: process.env.MONGODB_PASSWORD,
     },
   });
 }

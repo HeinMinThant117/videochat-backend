@@ -1,4 +1,5 @@
 import app from "../app";
+import "dotenv/config";
 
 describe("Logging In", () => {
   test("returns 401 with incorrect credentials", async () => {
