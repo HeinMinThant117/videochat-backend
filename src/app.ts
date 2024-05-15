@@ -19,7 +19,7 @@ fastify.register(authRoutes);
 fastify.register(cors, {});
 
 fastify.get("/", (_request, reply) => {
-  return reply.sendFile("index.html");
+  return reply.status(200).sendFile("index.html");
 });
 
 export default fastify;
