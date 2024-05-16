@@ -4,7 +4,7 @@
   "description": "Backend for the video chat application",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "NODE_ENV=test jest --detectOpenHandles --forceExit",
     "start": "npm run build && node build/index.js",
     "dev": "npx nodemon",
     "build": "tsc",
@@ -25,6 +25,7 @@
     "fastify-plugin": "^4.5.1",
     "fastify-socket.io": "^5.0.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.6.1",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
@@ -32,7 +33,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.12.12",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",

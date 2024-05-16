@@ -4,10 +4,19 @@ import { FastifyInstance } from "fastify";
 
 async function dbConnector(fastify: FastifyInstance) {
   fastify.register(fastifyMongodb, {
-    url: process.env.MONGODB_URI,
+    url:
+      process.env.NODE_ENV === "test"
+        ? process.env.MONGODB_TEST_URI
+        : process.env.MONGODB_URI,
     auth: {
-      username: process.env.MONGODB_USERNAME,
-      password: process.env.MONGODB_PASSWORD,
+      username:
+        process.env.NODE_ENV === "test"
+          ? process.env.MONGODB_USERNAME
+          : process.env.MONGODB_TEST_USERNAME,
+      password:
+        process.env.NODE_ENV === "test"
+          ? process.env.MONGODB_PASSWORD
+          : process.env.MONGODB_TEST_PASSWORD,
     },
   });
 }

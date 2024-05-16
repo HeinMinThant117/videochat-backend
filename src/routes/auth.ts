@@ -40,68 +40,100 @@ async function routes(fastify: FastifyInstance) {
     };
   });
 
-  fastify.post<{ Body: LoginUser }>("/login", async (request, reply) => {
-    const { email, password } = request.body;
-    const findUser = await userCollection?.findOne({ email });
-    if (!findUser) {
-      return reply.code(404).send({ error: "User not found" });
-    }
-
-    const result = await bcrypt.compare(password, findUser.password);
-    if (!result) {
-      return reply.code(401).send({ error: "Invalid email or password" });
-    }
-
-    const jwtToken = jwt.sign(
-      {
-        id: findUser._id,
+  fastify.post<{ Body: LoginUser }>(
+    "/login",
+    {
+      schema: {
+        body: {
+          type: "object",
+          properties: {
+            email: { type: "string" },
+            password: { type: "string" },
+          },
+          required: ["email", "password"],
+        },
       },
-      jwtSecret
-    );
+    },
+    async (request, reply) => {
+      const { email, password } = request.body;
 
-    return {
-      message: "Success",
-      user: {
-        token: jwtToken,
-        id: findUser._id,
-        username: findUser.username,
-        emal: findUser.email,
-      },
-    };
-  });
+      const findUser = await userCollection?.findOne({ email });
+      if (!findUser) {
+        return reply.code(404).send({ error: "User not found" });
+      }
 
-  fastify.post<{ Body: RegisterUser }>("/register", async (request, reply) => {
-    const { username, email, password } = request.body;
-    const findUser = await userCollection?.findOne({ email });
-    if (findUser) {
-      return reply.code(409).send({ error: "User already exists" });
+      const result = await bcrypt.compare(password, findUser.password);
+      if (!result) {
+        return reply.code(401).send({ error: "Invalid email or password" });
+      }
+
+      const jwtToken = jwt.sign(
+        {
+          id: findUser._id,
+        },
+        jwtSecret
+      );
+
+      return {
+        message: "Success",
+        user: {
+          token: jwtToken,
+          id: findUser._id,
+          username: findUser.username,
+          emal: findUser.email,
+        },
+      };
     }
+  );
 
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const result = await userCollection?.insertOne({
-      username,
-      email,
-      password: passwordHash,
-    });
-
-    const jwtToken = jwt.sign(
-      {
-        id: result.insertedId.toString(),
+  fastify.post<{ Body: RegisterUser }>(
+    "/register",
+    {
+      schema: {
+        body: {
+          type: "object",
+          properties: {
+            username: { type: "string" },
+            email: { type: "string" },
+            password: { type: "string" },
+          },
+          required: ["username", "email", "password"],
+        },
       },
-      jwtSecret
-    );
+    },
+    async (request, reply) => {
+      const { username, email, password } = request.body;
+      const findUser = await userCollection?.findOne({ email });
+      if (findUser) {
+        return reply.code(409).send({ error: "User already exists" });
+      }
 
-    return {
-      message: "Success",
-      user: {
-        token: jwtToken,
-        id: result.insertedId.toString(),
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      const result = await userCollection?.insertOne({
         username,
         email,
-      },
-    };
-  });
+        password: passwordHash,
+      });
+
+      const jwtToken = jwt.sign(
+        {
+          id: result.insertedId.toString(),
+        },
+        jwtSecret
+      );
+
+      return {
+        message: "Success",
+        user: {
+          token: jwtToken,
+          id: result.insertedId.toString(),
+          username,
+          email,
+        },
+      };
+    }
+  );
 }
 
 export default routes;

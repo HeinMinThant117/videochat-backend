@@ -6,7 +6,7 @@ import path = require("path");
 import cors from "@fastify/cors";
 
 const fastify = Fastify({
-  logger: true,
+  logger: process.env.NODE_ENV === "test" ? false : true,
 });
 
 fastify.register(fastifyStatic, {
