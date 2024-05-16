@@ -17,7 +17,7 @@ beforeEach(async () => {
 });
 
 describe("Logging In", () => {
-  test("returns 400 with missing credentials", async () => {
+  test("returns 400 with missing request body data", async () => {
     const response1 = await app.inject({
       method: "POST",
       url: "/login",
@@ -70,6 +70,65 @@ describe("Logging In", () => {
     });
 
     expect(response.statusCode).toBe(200);
+  });
+});
+
+describe("Registering", () => {
+  const sendRegisterRequest = async (body) => {
+    return await app.inject({
+      url: "/register",
+      method: "POST",
+      body,
+    });
+  };
+
+  test("returns 400 if missing request body data", async () => {
+    const response1 = await sendRegisterRequest({
+      email: "hein@test.com",
+      password: "hein1234",
+    });
+    const response2 = await sendRegisterRequest({
+      name: "hein",
+      password: "hein1234",
+    });
+    const response3 = await sendRegisterRequest({
+      name: "hein",
+      email: "hein@test.com",
+    });
+
+    expect(response1.statusCode).toBe(400);
+    expect(response2.statusCode).toBe(400);
+    expect(response3.statusCode).toBe(400);
+  });
+
+  test("returns 409 if the user already exists", async () => {
+    await collection.insertOne({
+      username: "hein",
+      email: "hein@test.com",
+      password: "hein1234",
+    });
+
+    const response = await sendRegisterRequest({
+      username: "hein",
+      email: "hein@test.com",
+      password: "hein1234",
+    });
+
+    expect(response.statusCode).toBe(409);
+  });
+
+  test("returns 200 if it's successful", async () => {
+    const response = await sendRegisterRequest({
+      username: "hein",
+      email: "hein@test.com",
+      password: "hein1234",
+    });
+
+    expect(response.statusCode).toBe(200);
+
+    const users = await collection.find({}).toArray();
+    expect(users.length).toBe(1);
+    expect(users[0].email).toBe("hein@test.com");
   });
 });
 
