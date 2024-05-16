@@ -49,7 +49,7 @@ describe("Logging In", () => {
     });
 
     expect(response.statusCode).toBe(404);
-    expect(JSON.parse(response.body).error).toBe("User not found");
+    expect(response.json().error).toBe("User not found");
   });
 
   test("returns 200 if the user does exist", async () => {
@@ -129,6 +129,47 @@ describe("Registering", () => {
     const users = await collection.find({}).toArray();
     expect(users.length).toBe(1);
     expect(users[0].email).toBe("hein@test.com");
+  });
+});
+
+describe("Getting a user", () => {
+  test("returns 401 if invalid token", async () => {
+    const response = await app.inject({
+      url: "/user",
+    });
+
+    expect(response.statusCode).toBe(401);
+  });
+
+  test("returns 200 if it's a valid token", async () => {
+    const passwordHash = await bcrypt.hash("test1234", 10);
+    await collection.insertOne({
+      username: "hein",
+      email: "hein@test.com",
+      password: passwordHash,
+    });
+
+    const response = await app.inject({
+      url: "/login",
+      method: "POST",
+      body: {
+        email: "hein@test.com",
+        password: "test1234",
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const token = response.json().user.token;
+
+    const userResponse = await app.inject({
+      url: "/user",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    expect(userResponse.statusCode).toBe(200);
+    expect(userResponse.json().user.email).toBe("hein@test.com");
   });
 });
 
